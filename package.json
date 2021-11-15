@@ -1,0 +1,20 @@
+{
+  "name": "ez-dbserver",
+  "version": "1.0.0",
+  "description": "## Problem Domain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EZ-Chat/ez-dbServer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EZ-Chat/ez-dbServer/issues"
+  },
+  "homepage": "https://github.com/EZ-Chat/ez-dbServer#readme"
+}
