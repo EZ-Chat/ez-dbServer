@@ -2,13 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
-const { people, cars } = require('./models');
+const { user } = require('./models');
 
 const Collection = require('./models/Collections.js');
 
 const modelMap = {
-  people: new Collection(people),
-  cars: new Collection(cars),
+  signin = new Collection(user),
+  signup = new Collection(user),
 };
 
 router.use('/:model', (req, res, next) => {
@@ -43,8 +43,7 @@ router.get('/:model/:id', async (req, res) => {
 router.put('/:model/:id', async (req, res) => {
   const model = req.model;
   const id = req.params.id;
-  const recordToChange = await model.findByPk(id);
-  const record = await recordToChange.update(req.body);
+  const record = await model.update(id, req.body);
   res.send(record);
 });
 
