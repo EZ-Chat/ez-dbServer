@@ -9,6 +9,7 @@ const SECRET = process.env.SECRET || 'toes';
 const userSchema = new Schema({
   username: { type: String },
   password: { type: String },
+  friendCode: { type: String },
   rooms: [String],
 });
 
@@ -16,10 +17,11 @@ userSchema.virtual('token').get(() => {
   return jwt.sign({ username: this.username }, SECRET);
 });
 
-userSchema.methods.beforeCreate = async function () {
+userSchema.pre('save', async function (next) {
   const hashedPass = await bcrypt.hash(this.password, 10);
   this.password = hashedPass;
-};
+  next();
+});
 
 userSchema.methods.authenticateBasic = async function (username, password) {
   const user = await this.findOne({ username }).exec();
@@ -42,4 +44,6 @@ userSchema.methods.authenticateToken = async function (token) {
   }
 };
 
-module.exports = model('User', userSchema);
+const User = model('User', userSchema);
+
+module.exports = User;
