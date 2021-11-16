@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/EZ-Chat/ez-dbServer/issues"
   },
-  "homepage": "https://github.com/EZ-Chat/ez-dbServer#readme"
+  "homepage": "https://github.com/EZ-Chat/ez-dbServer#readme",
+  "dependencies": {
+    "base-64": "^1.0.0",
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1"
+  }
 }
