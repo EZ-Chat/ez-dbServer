@@ -2,32 +2,26 @@
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { Schema, model } = require('mongoose');
+const { Schema, model, VirtualType } = require('mongoose');
 
 const SECRET = process.env.SECRET || 'toes';
 
-// const userSchema = () => {
-const userModel = model(
-  'User',
-  new Schema({
+const userSchema = new Schema({
     userName: { type: String },
     password: { type: String },
     rooms: [String],
-    token: {
-      type: DataTypes.VIRTUAL,
-      get() {
-        return jwt.sign({ username: this.username }, SECRET);
-      },
-    },
-  })
-);
+  });
 
-userModel.beforeCreate(async (user) => {
+userSchema.virtual('token').get(() => {
+  return jwt.sign({ username: this.username }, SECRET);
+})
+
+User.beforeCreate(async (user) => {
   let hashedPass = await bcrypt.hash(user.password, 10);
   user.password = hashedPass;
 });
 
-userModel.authenticateBasic = async function (username, password) {
+User.authenticateBasic = async function (username, password) {
   const user = await this.findOne({ username }).exec();
   const valid = await bcrypt.compare(password, user.password);
   if (valid) {
@@ -36,7 +30,7 @@ userModel.authenticateBasic = async function (username, password) {
   throw new Error('Invalid User');
 };
 
-userModel.authenticateToken = async function (token) {
+User.authenticateToken = async function (token) {
   try {
     const parsedToken = jwt.verify(token, SECRET);
     const user = await this.findOne({ username: parsedToken.username }).exec();
@@ -48,7 +42,4 @@ userModel.authenticateToken = async function (token) {
   }
 };
 
-// return userModel;
-// };
-
-module.exports = userModel;
+module.exports = model('User', userSchema);
