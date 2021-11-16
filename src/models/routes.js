@@ -16,7 +16,7 @@ module.exports = {
     }
   },
 
-  signin: (req, res, next) => {
+  signin: (req, res) => {
     const user = {
       userInfo: req.userInfo,
       token: requserInfo.token,
