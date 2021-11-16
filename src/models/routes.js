@@ -1,6 +1,6 @@
 'use strict';
 
-const { user } = require('./models');
+const { user } = require('./user.js');
 
 module.exports = {
   signup: async (req, res, next) => {

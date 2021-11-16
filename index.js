@@ -6,6 +6,4 @@ require('dotenv').config();
 
 const PORT = process.env.PORT;
 
-database.sync().then(() => {
-  server.start(PORT);
-});
+server.start(PORT);
