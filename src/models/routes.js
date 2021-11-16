@@ -8,7 +8,7 @@ module.exports = {
     try {
       const user = await User.findOne({username});
       if(user){
-        return res.status(400).JSON({message: 'User already exists'});
+        res.status(400).json({message: 'User already exists'});
       } else {
         const userRecord = new User({
           username,
