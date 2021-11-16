@@ -2,56 +2,14 @@
 
 const express = require('express');
 const router = express.Router();
-const { user } = require('./models');
 
-const Collection = require('./models/Collections.js');
+const basicAuth = require('./middleware/basic.js');
+const bearerAuth = require('./middleware/bearer.js');
+const { signup, signin, update, remove } = require('./models/routes.js');
 
-const modelMap = {
-  signin = new Collection(user),
-  signup = new Collection(user),
-};
-
-router.use('/:model', (req, res, next) => {
-  const model = modelMap[req.params.model];
-  if (!model) {
-    next('No model found');
-  }
-  req.model = model;
-  next();
-});
-
-router.post('/:model', async (req, res) => {
-  const model = req.model;
-  const json = req.body;
-  const newRecord = await model.create(json);
-  res.send(newRecord);
-});
-
-router.get('/:model', async (req, res) => {
-  const model = req.model;
-  const records = await model.read();
-  res.send(records);
-});
-
-router.get('/:model/:id', async (req, res) => {
-  const model = req.model;
-  const id = req.params.id;
-  const record = await model.read(id);
-  res.send(record);
-});
-
-router.put('/:model/:id', async (req, res) => {
-  const model = req.model;
-  const id = req.params.id;
-  const record = await model.update(id, req.body);
-  res.send(record);
-});
-
-router.delete('/:model/:id', async (req, res) => {
-  const model = req.model;
-  const id = req.params.id;
-  const deletedRows = await model.delete(id);
-  res.send(deletedRows);
-});
+router.post('/signup', signup);
+router.post('/signin', basicAuth, signin);
+router.put('/user/:id', bearerAuth, update);
+router.delete('/user/:id', bearerAuth, remove);
 
 module.exports = router;
