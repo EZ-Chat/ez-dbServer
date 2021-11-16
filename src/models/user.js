@@ -16,12 +16,12 @@ userSchema.virtual('token').get(() => {
   return jwt.sign({ username: this.username }, SECRET);
 });
 
-User.beforeCreate(async (user) => {
-  const hashedPass = await bcrypt.hash(user.password, 10);
-  user.password = hashedPass;
-});
+userSchema.methods.beforeCreate = async function () {
+  const hashedPass = await bcrypt.hash(this.password, 10);
+  this.password = hashedPass;
+};
 
-User.authenticateBasic = async function (username, password) {
+userSchema.methods.authenticateBasic = async function (username, password) {
   const user = await this.findOne({ username }).exec();
   const valid = await bcrypt.compare(password, user.password);
   if (valid) {
@@ -30,7 +30,7 @@ User.authenticateBasic = async function (username, password) {
   throw new Error('Invalid User');
 };
 
-User.authenticateToken = async function (token) {
+userSchema.methods.authenticateToken = async function (token) {
   try {
     const parsedToken = jwt.verify(token, SECRET);
     const user = await this.findOne({ username: parsedToken.username }).exec();
