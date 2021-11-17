@@ -80,7 +80,7 @@ describe('Testing dbServer', () => {
     });
 
     const encodedString = base64.encode('test01:password');
-    const response = await mockrequest.post('/signin').set('authrorization', `Basic ${encodedString}`);
+    const response = await mockrequest.post('/signin').set('authorization', `Basic ${encodedString}`);
 
     expect(response.status).toBe(200);
 
