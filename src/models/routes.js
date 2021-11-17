@@ -1,6 +1,8 @@
 'use strict';
 
 const { User } = require('../models');
+const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcrypt');
 
 module.exports = {
   signup: async (req, res, next) => {
@@ -10,10 +12,12 @@ module.exports = {
       if (user) {
         res.status(400).json({ message: 'User already exists' });
       } else {
+        const hashedPass = await bcrypt.hash(password, 10);
         const userRecord = new User({
           username,
-          password,
+          password: hashedPass,
           rooms,
+          friendCode: uuidv4(),
         });
         const savedNewUser = await userRecord.save();
         res.status(201).json(savedNewUser);
@@ -44,9 +48,13 @@ module.exports = {
     try {
       const user = await User.findOne({ _id: req.userInfo._id });
       const friend = await User.findOne({ friendCode });
+      const roomKey = uuidv4();
       user.friendsList.push({
         friend,
       });
+      user.rooms.push(roomKey);
+      friend.rooms.push(roomKey);
+      await friend.save();
       const savedUser = await user.save();
       res.status(200).send(savedUser);
     } catch (error) {
