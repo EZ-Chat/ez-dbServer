@@ -5,8 +5,6 @@ const jwt = require('jsonwebtoken');
 const { Schema, model } = require('mongoose');
 const mongoose = require('mongoose');
 
-const { v4: uuidv4 } = require('uuid');
-
 const SECRET = process.env.SECRET || 'toes';
 
 const userSchema = new Schema(
@@ -22,13 +20,6 @@ const userSchema = new Schema(
 
 userSchema.virtual('token').get(() => {
   return jwt.sign({ username: this.username }, SECRET);
-});
-
-userSchema.pre('save', async function (next) {
-  const hashedPass = await bcrypt.hash(this.password, 10);
-  this.password = hashedPass;
-  this.friendCode = uuidv4();
-  next();
 });
 
 userSchema.statics.authenticateBasic = async function (username, password) {
