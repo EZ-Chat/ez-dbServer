@@ -4,17 +4,21 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Schema, model } = require('mongoose');
 const mongoose = require('mongoose');
+
 const { v4: uuidv4 } = require('uuid');
 
 const SECRET = process.env.SECRET || 'toes';
 
-const userSchema = new Schema({
-  username: { type: String },
-  password: { type: String },
-  friendCode: { type: String },
-  friendsList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  rooms: [String],
-});
+const userSchema = new Schema(
+  {
+    username: { type: String },
+    password: { type: String },
+    friendCode: { type: String },
+    friendsList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    rooms: [String],
+  },
+  { toJSON: { virtuals: true } }
+);
 
 userSchema.virtual('token').get(() => {
   return jwt.sign({ username: this.username }, SECRET);
@@ -27,8 +31,8 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.methods.authenticateBasic = async function (username, password) {
-  const user = await this.findOne({ username }).exec();
+userSchema.statics.authenticateBasic = async function (username, password) {
+  const user = await this.findOne({ username });
   const valid = await bcrypt.compare(password, user.password);
   if (valid) {
     return user;
@@ -36,7 +40,7 @@ userSchema.methods.authenticateBasic = async function (username, password) {
   throw new Error('Invalid User');
 };
 
-userSchema.methods.authenticateToken = async function (token) {
+userSchema.statics.authenticateToken = async function (token) {
   try {
     const parsedToken = jwt.verify(token, SECRET);
     const user = await this.findOne({ username: parsedToken.username }).exec();

@@ -6,9 +6,9 @@ module.exports = {
   signup: async (req, res, next) => {
     const { username, password, rooms } = req.body;
     try {
-      const user = await User.findOne({username});
-      if(user){
-        res.status(400).json({message: 'User already exists'});
+      const user = await User.findOne({ username });
+      if (user) {
+        res.status(400).json({ message: 'User already exists' });
       } else {
         const userRecord = new User({
           username,
@@ -40,13 +40,13 @@ module.exports = {
     }
   },
 
-  addFriend: async (req,res) => {
-    try{
-      const user = await User.findOne({_id: req.userInfo._id})
-      const friend = await User.findOne({friendCode});
-      user.friendList.push({
-        friend
-      })
+  addFriend: async (req, res) => {
+    try {
+      const user = await User.findOne({ _id: req.userInfo._id });
+      const friend = await User.findOne({ friendCode });
+      user.friendsList.push({
+        friend,
+      });
       const savedUser = await user.save();
       res.status(200).send(savedUser);
     } catch (error) {
