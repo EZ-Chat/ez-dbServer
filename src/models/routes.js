@@ -26,7 +26,7 @@ module.exports = {
   signin: (req, res) => {
     const user = {
       userInfo: req.userInfo,
-      token: requserInfo.token,
+      token: req.token,
     };
     res.status(200).json(user);
   },
@@ -35,6 +35,20 @@ module.exports = {
     try {
       const updatedRecord = await this.model.findOneAndUpdate(req.params.id, req.body);
       res.status(200).send(updatedRecord);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  },
+
+  addFriend: async (req,res) => {
+    try{
+      const user = await User.findOne({_id: req.userInfo._id})
+      const friend = await User.findOne({friendCode});
+      user.friendList.push({
+        friend
+      })
+      const savedUser = await user.save();
+      res.status(200).send(savedUser);
     } catch (error) {
       res.status(500).send(error);
     }
