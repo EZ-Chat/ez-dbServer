@@ -10,7 +10,7 @@ module.exports = {
     try {
       const user = await User.findOne({ username });
       if (user) {
-        res.status(400).json({ message: 'User already exists' });
+        res.status(500).json({ message: 'User already exists' });
       } else {
         const hashedPass = await bcrypt.hash(password, 10);
         const userRecord = new User({
