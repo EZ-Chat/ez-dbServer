@@ -1,52 +1,55 @@
-const { db, users } = require('../src/models/index');
-const server = require('../src/server.js');
+const server = require('../src/server');
 const supertest = require('supertest');
-const mockrequest = supertest('server');
-const jwt = require('jsonwebtoken');
+const mockrequest = supertest(server.server);
 
+
+require("dotenv").config();
+const mongoose = require('mongoose');
+const { JsonWebTokenError } = require('jsonwebtoken');
+
+let db;
 
 beforeAll(async() => {
-  await db.sync()
-  await users.bulkCreate([
-    {
-      friendCode: 0,
-      userName: 'vitortedario',
-      password: 'password',
-    }
-  ]);
+  mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+
+  db = mongoose.connection;
+
+  db.once('open', ()=>console.log(`Connect to MongoDB at ${db.host}:${db.port}`));
+
+  db.on('error', (error)=>console.log(`Database error`, error));
+
 });
 
 afterAll(async() => {
-  await db.drop()
+  db.close();
 });
+
 
 describe('Testing dbServer', () => {
 
   it('should create a user on POST /signup', async() => {
- 
-    const request = {
-      userName: 'vitortedario',
-      password: 'password',
-      friendCode: null,
-      friendsList: [],
-      rooms: []
-    }
-    const response = await mockrequest.post('/signup').send(request);
-    expect(response.body.userName).toStrictEqual('vitortedario');
+    const response = await mockrequest.post('/signup').send(
+      {
+        username: 'vitortedario',
+        password: 'password',
+        friendCode: null,
+        friendsList: [],
+        rooms: [],
+      }
+    );
+    expect(response.status).toEqual(201);
+    expect(response.body.username).toStrictEqual('vitortedario');
     expect(response.body.password).toEqual(expect.any(String));
     expect(response.body.friendCode).toEqual(expect.any(String));
-    expect(response.status).toBe(201);
   });
 
   it('should sign in a user on /signin', async() => {
-    const response = await (await mockrequest.post('/signin')).setEncoding('Authorization', 'Basic SmF5c29uLkRlY2tvdzc3QHRlc3QuY29tOnBhc3N3b3Jk');
-    expect(response.body).toStrictEqual(
-      {
-        friendCode: 0,
-        userName: 'vitortedario',
-        password: 'password',
-      }
-    );
+    const response = await mockrequest.post('/signin');
+    expect(response.body.userInfo.username).toStrictEqual('vitortedario');
+    expect(response.body.userInfo.password).toEqual(expect.any(String));
     expect(response.status).toBe(200);
   });
 
