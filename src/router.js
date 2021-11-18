@@ -10,7 +10,7 @@ const { signup, signin, update, addFriend, remove } = require('./models/routes.j
 router.post('/signup', signup);
 router.post('/signin', basicAuth, signin);
 router.put('/user/:id', bearerAuth, update);
-router.put('/addFriend/:id', bearerAuth, addFriend);
+router.put('/addFriend', bearerAuth, addFriend);
 router.delete('/user/:id', bearerAuth, remove);
 
 module.exports = router;

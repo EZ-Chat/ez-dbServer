@@ -3,6 +3,7 @@
 const { User } = require('../models');
 
 module.exports = async (req, res, next) => {
+
   try {
     if (!req.headers.authorization) {
       next('Invalid Login');
@@ -15,6 +16,7 @@ module.exports = async (req, res, next) => {
     req.token = validUser.token;
     next();
   } catch (error) {
+    console.log(error)
     res.status(403).send('Invalid Login');
   }
 };
