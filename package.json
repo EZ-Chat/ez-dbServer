@@ -1,0 +1,32 @@
+{
+  "name": "ez-dbserver",
+  "version": "1.0.0",
+  "description": "## Problem Domain",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EZ-Chat/ez-dbServer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EZ-Chat/ez-dbServer/issues"
+  },
+  "homepage": "https://github.com/EZ-Chat/ez-dbServer#readme",
+  "dependencies": {
+    "base-64": "^1.0.0",
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "faker": "^5.5.3",
+    "jest": "^27.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.13",
+    "supertest": "^6.1.6",
+    "uuid": "^8.3.2"
+  }
+}
