@@ -15,10 +15,12 @@ const userSchema = new Schema(
     friendsList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     rooms: [String],
   },
-  { toJSON: { virtuals: true } }
+  { toJSON: { virtuals: true },
+    toObject: {virtuals: true }}
 );
 
-userSchema.virtual('token').get(() => {
+userSchema.virtual('token')
+.get(function () {
   return jwt.sign({ username: this.username }, SECRET);
 });
 
@@ -34,7 +36,7 @@ userSchema.statics.authenticateBasic = async function (username, password) {
 userSchema.statics.authenticateToken = async function (token) {
   try {
     const parsedToken = jwt.verify(token, SECRET);
-    const user = await this.findOne({ username: parsedToken.username }).exec();
+    const user = await this.findOne({ username: parsedToken.username });
     if (user) {
       return user;
     }

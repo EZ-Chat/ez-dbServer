@@ -7,6 +7,7 @@ module.exports = async (req, res, next) => {
   if (!req.headers.authorization) {
     next('No auth header');
   }
+
   const basicHeaderParts = req.headers.authorization.split(' ');
   const encodedString = basicHeaderParts.pop();
   const decodedString = base64.decode(encodedString);
