@@ -1,26 +1,27 @@
 const server = require('../src/server');
 const supertest = require('supertest');
 const mockrequest = supertest(server.server);
-const faker = require('faker');
 const base64 = require('base-64');
+const faker = require('faker');
 
 require("dotenv").config();
 const mongoose = require('mongoose');
 const { request } = require('express');
+const { signin } = require('../src/models/routes');
 
 let db;
 
 const testUser1 = {
-  username: '',
-  password: '',
+  username: faker.name.firstName(),
+  password: 'password',
   friendCode: null,
   friendsList: [],
   rooms: [],
 }
 
 const testUser2 = {
-  username: '',
-  password: '',
+  username: faker.name.firstName(),
+  password: 'password',
   friendCode: null,
   friendsList: [],
   rooms: [],
@@ -46,35 +47,26 @@ afterAll(async() => {
 describe('Testing dbServer', () => {
 
   it('should create a user on POST /signup', async() => {
-    const response = await mockrequest.post('/signup').send(
-      {
-        username: 'test68',
-        password: 'password',
-        friendCode: null,
-        friendsList: [],
-        rooms: [],
-      }
-    );
-    testUser1.username = response.body.username;
-    testUser1.password = response.body.password;
-    testUser1.friendCode = response.body.friendCode;
+    const response = await mockrequest.post('/signup').send(testUser1);
+    expect(response.status).toBe(201);
   });
 
   it('should sign in a user on /signin', async() => {
-    
-    await mockrequest.post('/signup').send(
-      {
-        username: 'test01',
-        password: 'password',
-        friendCode: null,
-        friendsList: [],
-        rooms: [],
-      });
+    await mockrequest.post('/signup').send(testUser2);
+    const encodedString = base64.encode(`${testUser2.username}:${testUser2.password}`);
+    const response = await mockrequest.post('/signin').set('authorization', `Basic ${encodedString}`);
 
-      const encodedString = base64.encode('test01:password');
-      const response = await mockrequest.post('/signin').set('authorization', `Basic ${encodedString}`);
-      expect(response.status).toBe(200);
+    expect(response.status).toBe(200);
   });
 
-  
+  it('can succesfully add a friend', async() => {
+    const signinResponse = await mockrequest.post('/signin').auth(testUser2.username, 'password');
+    const token = signinResponse.body.userInfo.token;
+    const response = await mockrequest.put('/addFriend')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
+      friendCode: testUser1.friendCode
+    });
+    expect(response.status).toBe(200);
+  });
 });
