@@ -11,7 +11,6 @@ module.exports = async (req, res, next) => {
   const basicHeaderParts = req.headers.authorization.split(' ');
   const encodedString = basicHeaderParts.pop();
   const decodedString = base64.decode(encodedString);
-
   const [username, password] = decodedString.split(':');
 
   try {
