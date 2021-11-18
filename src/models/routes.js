@@ -47,8 +47,8 @@ module.exports = {
 
   addFriend: async (req, res) => {
     try {
-      let user = await User.findOne({ _id: req.userInfo._id });
-      let friend = await User.findOne({ friendCode: req.body.friendCode });
+      const user = await User.findOne({ _id: req.userInfo._id });
+      const friend = await User.findOne({ friendCode: req.body.friendCode });
       const roomKey = uuidv4();
       user.friendsList.push(friend);
       friend.friendsList.push(user);
