@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const { Schema, model } = require('mongoose');
 const mongoose = require('mongoose');
 
-const SECRET = process.env.SECRET || 'toes';
+const SECRET = process.env.SECRET;
 
 const userSchema = new Schema(
   {
