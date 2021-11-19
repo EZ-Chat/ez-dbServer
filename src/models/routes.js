@@ -9,7 +9,6 @@ module.exports = {
     const { username, password, rooms } = req.body;
     try {
       const user = await User.findOne({ username });
-      console.log(user, 'THIS IS USER');
       if (user) {
         res.status(500).json({ message: 'User already exists' });
       } else {
