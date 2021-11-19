@@ -48,6 +48,7 @@ describe('Testing dbServer', () => {
 
   it('should create a user on POST /signup', async() => {
     const response = await mockrequest.post('/signup').send(testUser1);
+    testUser1.friendCode = response.body.friendCode;
     expect(response.status).toBe(201);
   });
 
